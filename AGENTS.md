@@ -60,6 +60,18 @@
 
 ## Git 작업 규칙
 
+### branch 규칙
+
+- `main` branch에서는 직접 변경하거나 `commit`하지 않는다.
+- 하나의 논리적인 변경 단위마다 최신 `main`에서 새로운 branch를 생성한다.
+- 하나의 branch에는 하나의 목적과 관련된 변경만 포함한다.
+- 서로 관련 없는 변경은 별도의 branch로 분리한다.
+- branch 이름은 `type/kebab-case-summary` 형식으로 작성한다.
+- `type`은 `feat`, `fix`, `docs`, `refactor`, `test`, `chore` 중에서 선택한다.
+- 변경 검증이 완료된 branch만 Pull Request를 통해 `main`에 merge한다.
+- merge가 완료된 branch는 로컬과 원격에서 삭제한다.
+- branch 생성, merge 및 삭제는 제안할 수 있지만, 사용자가 **명시적으로 지시하지 않는 이상 진행하지 않는다**.
+
 ### commit 규칙
 
 - `commit`은 제안할 수 있지만, 사용자가 **명시적으로 지시하지 않는 이상 진행하지 않는다**.
