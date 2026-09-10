@@ -69,7 +69,9 @@
 - branch 이름은 `type/kebab-case-summary` 형식으로 작성한다.
 - `type`은 `feat`, `fix`, `docs`, `refactor`, `test`, `chore` 중에서 선택한다.
 - 변경 검증이 완료된 branch만 Pull Request를 통해 `main`에 merge한다.
-- `main`에 merge가 완료되면 작업 branch의 로컬과 원격 삭제를 사용자에게 제안한다.
+- 하나의 작업 branch에는 같은 목적의 여러 `commit`을 포함할 수 있다.
+- merge는 작업 branch의 Pull Request 단위로 진행한다.
+- 각 작업 branch가 `main`에 merge되면 해당 branch의 로컬과 원격 삭제를 사용자에게 제안한다.
 - branch 생성, merge 및 삭제는 제안할 수 있지만, 사용자가 **명시적으로 지시하지 않는 이상 진행하지 않는다**.
 
 ### commit 규칙
