@@ -36,5 +36,4 @@ jobs:
           :domain:javadoc
           :application:javadoc
           :adapter-in-web:javadoc
-          :adapter-out-logging:javadoc
           :bootstrap:javadoc

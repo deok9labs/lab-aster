@@ -14,18 +14,16 @@
 | Logging | Log4j2 | Spring Boot Log4j2 starter |
 | Architecture | Hexagonal Architecture | Ports and Adapters |
 
-## 임시 기본 구조
+## 모듈 구조
 
-헥사고날 아키텍처의 의존성 방향을 검증하기 위해 Hello World 유스케이스를 멀티 모듈 기본 구조로 제공합니다. `Temp`로 시작하는 Java 타입은 실제 기능 구현을 시작할 때 검토 후 삭제합니다.
+| 모듈 | 역할 |
+| --- | --- |
+| `domain` | business rule과 invariant |
+| `application` | inbound·outbound port와 유스케이스 구현 |
+| `adapter-in-web` | REST API inbound adapter |
+| `bootstrap` | Spring Boot 실행과 port·adapter 조립 |
 
-```text
-GET /hello
-  → inbound adapter
-  → inbound port
-  → application service
-  → outbound port
-  → logging adapter
-```
+의존성은 adapter와 `bootstrap`에서 `application`과 `domain` 방향으로만 향합니다. outbound adapter 모듈은 실제 외부 시스템 경계가 생길 때 추가합니다.
 
 ## 실행 및 검증
 
