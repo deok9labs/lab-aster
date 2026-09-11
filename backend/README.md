@@ -5,8 +5,8 @@
 | 구분 | 기술 | 기준 |
 | --- | --- | --- |
 | Language | Java | 21 LTS |
-| Development JDK | Java 21 호환 배포판 | Eclipse Temurin 권장 |
-| Java Toolchain | Gradle Toolchain | Java 21 |
+| Development JDK | Eclipse Temurin | Java 21 LTS 필수 |
+| Java Toolchain | Gradle Toolchain | Eclipse Temurin 21 |
 | Framework | Spring Boot | 4.1.1 |
 | Build | Gradle | Kotlin DSL 및 Gradle Wrapper |
 | Architecture | Hexagonal Architecture | Ports and Adapters |
@@ -25,6 +25,14 @@ GET /hello
 ```
 
 ## 실행 및 검증
+
+빌드와 실행에는 Eclipse Temurin 21이 필요합니다. Gradle Toolchain이 Java 버전과 vendor를 검사하므로 다른 JDK 배포판이나 버전을 사용하면 빌드가 중단됩니다. `JAVA_HOME`과 `PATH`를 Temurin 21 설치 경로로 설정한 후 다음 명령으로 현재 환경을 확인합니다.
+
+```shell
+java -version
+```
+
+출력에서 Java 버전 `21`과 `Temurin`을 확인한 후 Gradle Wrapper를 사용합니다.
 
 Windows:
 
