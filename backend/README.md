@@ -5,7 +5,7 @@
 | 구분 | 기술 | 기준 |
 | --- | --- | --- |
 | Language | Java | 21 LTS |
-| Development JDK | Eclipse Temurin | JDK 21 최신 패치 |
+| Development JDK | Java 21 호환 배포판 | Eclipse Temurin 권장 |
 | Java Toolchain | Gradle Toolchain | Java 21 |
 | Framework | Spring Boot | 4.1.1 |
 | Build | Gradle | Kotlin DSL 및 Gradle Wrapper |
@@ -29,8 +29,8 @@ GET /hello
 Windows:
 
 ```shell
-gradlew.bat :bootstrap:bootRun
-gradlew.bat test
+.\gradlew.bat :bootstrap:bootRun
+.\gradlew.bat test
 ```
 
 macOS 및 Linux:
@@ -39,3 +39,5 @@ macOS 및 Linux:
 ./gradlew :bootstrap:bootRun
 ./gradlew test
 ```
+
+Swagger UI의 활성화 방법과 운영 환경 주의사항은 [`../doc/backend/swagger-ui.md`](../doc/backend/swagger-ui.md)를 참고합니다.

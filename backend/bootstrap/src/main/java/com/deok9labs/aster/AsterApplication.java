@@ -10,12 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AsterApplication {
 
     /**
-     * Spring Boot가 사용할 application 진입점 객체를 생성한다.
-     */
-    public AsterApplication() {
-    }
-
-    /**
      * Spring application context를 시작한다.
      *
      * @param args application에 전달된 명령행 인자

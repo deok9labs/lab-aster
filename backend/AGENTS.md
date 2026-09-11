@@ -16,6 +16,7 @@
 
 - 공개 class, interface, record 및 enum에는 역할과 책임을 설명하는 Javadoc을 작성한다.
 - 공개 또는 보호 method에는 호출 계약, 입력 조건, 반환 의미와 발생 가능한 예외 중 코드만으로 명확하지 않은 내용을 Javadoc으로 작성한다.
+- 입력 계약이나 side effect가 없는 기본 constructor는 Javadoc을 위해 명시적으로 선언하지 않는다.
 - `@param`, `@return`, `@throws`는 의미 있는 정보를 제공할 때만 사용하며 이름이나 type을 반복하지 않는다.
 - 상위 계약을 변경 없이 구현하는 단순 override는 문서를 중복하지 않고 상위 Javadoc을 상속할 수 있다.
 - domain에는 핵심 business rule과 invariant를, inbound port에는 use case의 목적·입력·결과·실패 조건을 문서화한다.

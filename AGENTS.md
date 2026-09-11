@@ -141,6 +141,8 @@
 - Pull Request 생성 후 `develop`이 변경되면 현재 Pull Request의 변경 범위와 통합 검증 결과를 다시 확인한다.
 - `develop`에서 `main`으로 merge할 때는 현재 Pull Request에 포함된 변경이 사용자가 확정한 범위와 일치하고, 해당 변경을 기준으로 필요한 검증이 완료되었는지 확인한다.
 - `develop`에서 `main`으로의 Pull Request는 두 branch의 계보를 유지하기 위해 `merge commit` 방식으로 merge한다.
+- `develop`에서 `main`으로 merge한 직후 두 branch의 파일 내용이 동일하고 기존 `develop`이 최신 `main`의 조상인지 확인한다.
+- 위 조건을 만족하면 다음 작업 branch를 만들기 전에 `develop`을 최신 `main`으로 fast-forward한다. branch protection으로 직접 update할 수 없으면 `main`에서 `develop`으로 Pull Request를 생성해 동기화한다.
 - 작업 branch에서 `develop`으로의 Pull Request는 branch의 원래 commit과 통합 이력을 보존하기 위해 `merge commit` 방식으로 merge한다.
 - 긴급 수정 branch에서 `main`으로의 Pull Request는 branch의 원래 commit과 통합 이력을 보존하기 위해 `merge commit` 방식으로 merge한다.
 - 긴급 수정이 `main`에 merge되면 `main`에서 `develop`으로 Pull Request를 생성하고 `merge commit` 방식으로 반영한다.
