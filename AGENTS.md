@@ -24,7 +24,7 @@
 - `push` 전에는 원격에 새로 전송될 전체 `commit`과 파일에서 민감 정보를 확인한다.
 - 민감 정보 검사는 값 자체를 응답이나 로그에 출력하지 않는 방식으로 수행한다.
 - 민감 정보가 포함된 파일이나 변경은 **`commit`하지 않는다**.
-- Git 이력에서 민감 정보가 발견되면 **`push`를 중단한다**.
+- 원격에 새로 전송될 Git 이력에서 민감 정보가 발견되면 **`push`를 중단한다**.
 
 ### 노출 대응
 
@@ -89,11 +89,12 @@
 - `main`과 `develop`에서는 작업 파일을 직접 수정하거나 `commit`하지 않는다.
 - 작업 branch를 생성하기 전에 미커밋 변경이 있는지 확인하고, 기존 변경이 있으면 임의로 이동하거나 포함하지 않는다.
 - 원격 변경을 동기화하기 위한 fast-forward 방식의 update는 허용한다.
-- `develop`은 최초 생성 시 최신 `main`에서 생성한다.
-- `main`이 변경되면 새로운 작업 branch를 생성하기 전에 해당 변경을 `develop`에 동기화한다.
-- 원격 저장소가 있으면 `develop`을 fast-forward 방식으로 동기화한 후 작업 branch를 생성한다.
+- 원격 저장소가 있으면 `main`을 fast-forward 방식으로 동기화하고, `develop`은 최초 생성 시 최신 `main`에서 생성한다.
+- `develop`에 없는 변경이 `main`에 반영되면 새로운 작업 branch를 생성하기 전에 해당 변경을 `develop`에 동기화한다.
+- 원격 저장소가 있으면 작업 branch의 기준 branch를 fast-forward 방식으로 동기화한 후 작업 branch를 생성한다.
 - 동기화할 수 없으면 작업을 중단하고 사용자에게 알린다.
-- `main`에 긴급 수정이 필요하면 최신 `main`에서 `fix` branch를 생성하고 Pull Request로 반영한다.
+- 긴급 수정 여부는 사용자가 명시적으로 결정한다. 긴급 수정이 필요할 가능성이 있으면 이유와 영향을 설명하고 사용자에게 긴급 수정 절차 적용 여부를 확인한다.
+- 사용자가 긴급 수정을 지시하면 최신 `main`에서 `fix` branch를 생성하고 Pull Request로 반영한다.
 - 긴급 수정을 제외한 작업 branch는 하나의 논리적인 변경 목적마다 최신 `develop`에서 생성한다.
 - 같은 목적의 여러 `commit`은 하나의 branch에 포함할 수 있지만, 서로 독립적인 변경은 별도의 branch로 분리한다.
 - 최초 `commit`처럼 작업 branch를 만들 수 없는 경우에는 이유를 설명하고, **사용자의 명시적인 지시를 받은 후** `main`에서 진행한다.
@@ -123,9 +124,13 @@
 - 충돌이나 실패한 check가 있으면 merge하지 않고 사용자에게 알린다.
 - 긴급 수정 branch를 제외한 작업 branch는 변경 검증을 완료한 후 Pull Request를 통해 `develop`에 merge한다.
 - 작업 branch가 merge된 `develop`에서는 변경 간의 충돌과 통합 동작을 검증한다.
-- 계획한 변경의 통합과 검증이 완료되면 `develop`에서 `main`으로 Pull Request를 생성한다.
+- `develop`에서 `main`으로의 Pull Request는 사용자가 반영 범위를 확정하고, 해당 범위의 변경이 모두 `develop`에 통합되었으며, `main`과 `develop`의 차이가 확정된 범위와 일치할 때 생성한다.
+- Pull Request 생성 후 `develop`이 변경되면 현재 Pull Request의 변경 범위와 통합 검증 결과를 다시 확인한다.
+- `develop`에서 `main`으로 merge할 때는 현재 Pull Request에 포함된 변경이 사용자가 확정한 범위와 일치하고, 해당 변경을 기준으로 필요한 검증이 완료되었는지 확인한다.
 - `develop`에서 `main`으로의 Pull Request는 두 branch의 계보를 유지하기 위해 `merge commit` 방식으로 merge한다.
 - 작업 branch에서 `develop`으로의 Pull Request는 기본적으로 `rebase` 방식으로 merge한다.
+- 긴급 수정 branch에서 `main`으로의 Pull Request는 기본적으로 `rebase` 방식으로 merge한다.
+- 긴급 수정이 `main`에 merge되면 `main`에서 `develop`으로 Pull Request를 생성하고 `merge commit` 방식으로 반영한다.
 - 다른 merge 방식이 필요하면 이유와 영향을 설명하고 사용자의 명시적인 지시를 받는다.
 - 작업 branch가 대상 branch에 merge되면 해당 작업 branch의 로컬과 원격 삭제를 사용자에게 제안한다.
 - 작업 branch를 삭제하기 전에 해당 Pull Request가 대상 branch에 merge되었는지 확인한다.
