@@ -8,6 +8,7 @@
 | Development JDK | Eclipse Temurin | Java 21 LTS 필수 |
 | Java Toolchain | Gradle Toolchain | Eclipse Temurin 21 |
 | Framework | Spring Boot | 4.1.1 |
+| API | REST API | JSON over HTTP, inbound adapter로 구현 |
 | Build | Gradle | Kotlin DSL 및 Gradle Wrapper |
 | Test | JUnit | JUnit 5 |
 | Logging | Log4j2 | Spring Boot Log4j2 starter |
