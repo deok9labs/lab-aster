@@ -1,5 +1,7 @@
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.api.tasks.testing.Test
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
 
 plugins {
     id("org.springframework.boot") version "4.1.1" apply false
@@ -32,5 +34,9 @@ subprojects {
 
     tasks.withType<Test>().configureEach {
         useJUnitPlatform()
+    }
+
+    tasks.withType<Javadoc>().configureEach {
+        (options as StandardJavadocDocletOptions).addBooleanOption("Xdoclint:all,-missing", true)
     }
 }
