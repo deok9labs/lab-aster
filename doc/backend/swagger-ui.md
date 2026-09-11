@@ -8,19 +8,18 @@
 
 ## 로컬 실행
 
-OpenAPI endpoint는 기본적으로 비활성화되어 있다. 로컬에서 사용할 때 `ASTER_OPENAPI_ENABLED` 환경 변수를 `true`로 설정하고 backend를 실행한다.
+OpenAPI endpoint는 별도 설정 없이 기본적으로 활성화된다.
 
 PowerShell:
 
 ```powershell
-$env:ASTER_OPENAPI_ENABLED = "true"
 ./gradlew.bat :bootstrap:bootRun
 ```
 
 macOS 및 Linux:
 
 ```shell
-ASTER_OPENAPI_ENABLED=true ./gradlew :bootstrap:bootRun
+./gradlew :bootstrap:bootRun
 ```
 
 실행 후 다음 주소를 사용한다.
@@ -31,15 +30,9 @@ ASTER_OPENAPI_ENABLED=true ./gradlew :bootstrap:bootRun
 | OpenAPI JSON | `http://localhost:8080/v3/api-docs` |
 | OpenAPI YAML | `http://localhost:8080/v3/api-docs.yaml` |
 
-PowerShell에서 실행을 마친 뒤 현재 session의 환경 변수를 제거하려면 다음 명령을 사용한다.
-
-```powershell
-Remove-Item Env:ASTER_OPENAPI_ENABLED
-```
-
 ## 운영 환경 주의사항
 
-- 운영 환경에서는 `ASTER_OPENAPI_ENABLED`의 기본값인 `false`를 유지한다.
+- 운영 환경에서는 `ASTER_OPENAPI_ENABLED=false`를 명시적으로 주입해 OpenAPI endpoint와 Swagger UI를 비활성화한다. 이 값이 누락되면 기본값 `true`가 적용되므로 배포 환경의 필수 설정으로 관리한다.
 - 외부 공개가 필요하면 인증·인가, network 접근 제한 및 공개할 API 범위를 먼저 결정한다.
 - Swagger UI만 숨기고 `/v3/api-docs`를 노출하거나 그 반대 상태를 만들지 않도록 두 기능을 같은 환경 변수로 제어한다.
 - API 요청·응답 예시에 인증 정보, 개인정보 또는 내부 system 정보를 작성하지 않는다.
