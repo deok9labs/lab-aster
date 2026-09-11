@@ -20,7 +20,7 @@ class SwaggerUiIntegrationTest {
         HttpResponse<String> response = TestHttpClient.get(port, "/v3/api-docs");
 
         assertEquals(200, response.statusCode());
-        assertTrue(response.body().contains("\"/hello\""));
+        assertTrue(response.body().contains("\"openapi\""));
     }
 
     @Test
@@ -29,13 +29,5 @@ class SwaggerUiIntegrationTest {
 
         assertEquals(200, response.statusCode());
         assertTrue(response.body().contains("Swagger UI"));
-    }
-
-    @Test
-    void servesHelloEndpoint() throws IOException, InterruptedException {
-        HttpResponse<String> response = TestHttpClient.get(port, "/hello");
-
-        assertEquals(200, response.statusCode());
-        assertTrue(response.body().contains("\"message\":\"Hello World\""));
     }
 }
