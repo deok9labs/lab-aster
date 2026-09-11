@@ -44,9 +44,10 @@
 
 ## Git 작업 승인 규칙
 
-- branch 생성, `commit`, `push`, Pull Request 생성, merge 및 branch 삭제는 각각 제안할 수 있지만, 사용자가 명시적으로 지시한 작업만 진행한다.
-- 하나의 Git 작업에 대한 지시를 다른 Git 작업의 승인으로 확대 해석하지 않는다.
-- 사용자가 앞서 제안된 여러 Git 작업을 명확히 지칭해 모두 진행하도록 지시하면 해당 작업은 각각 승인된 것으로 간주한다.
+- branch 생성, `commit`, `push`, Pull Request 생성, merge 및 branch 삭제는 각각 사용자의 명시적인 승인을 받은 경우에만 진행한다.
+- 하나의 Git 작업에 대한 승인을 다른 Git 작업의 승인으로 확대하지 않는다.
+- 사용자가 여러 Git 작업을 구체적으로 지정해 한꺼번에 승인하면, 지정된 작업은 각각 승인된 것으로 본다.
+- 승인은 해당 요청에만 적용하며 이후 작업의 승인으로 재사용하지 않는다.
 
 ---
 
@@ -100,16 +101,10 @@
 - `main`은 검증이 완료된 변경만 유지하는 안정 branch로 사용한다.
 - `develop`은 다음 `main` 반영 대상 변경을 통합하고 검증하는 장기 branch로 사용한다.
 - `main`과 `develop`에서는 작업 파일을 직접 수정하거나 `commit`하지 않는다.
-- 작업 branch를 생성하기 전에 미커밋 변경이 있는지 확인하고, 기존 변경이 있으면 임의로 이동하거나 포함하지 않는다.
-- 원격 변경을 동기화하기 위한 fast-forward 방식의 update는 허용한다.
-- 원격 저장소가 있으면 `main`을 fast-forward 방식으로 동기화하고, `develop`은 최초 생성 시 최신 `main`에서 생성한다.
-- `develop`에 없는 변경이 `main`에 반영되면 새로운 작업 branch를 생성하기 전에 해당 변경을 `develop`에 동기화한다.
-- 원격 저장소가 있으면 작업 branch의 기준 branch를 fast-forward 방식으로 동기화한 후 작업 branch를 생성한다.
-- 동기화할 수 없으면 작업을 중단하고 사용자에게 알린다.
-- 긴급 수정 여부는 사용자가 명시적으로 결정한다. 긴급 수정이 필요할 가능성이 있으면 이유와 영향을 설명하고 사용자에게 긴급 수정 절차 적용 여부를 확인한다.
-- 사용자가 긴급 수정을 지시하면 최신 `main`에서 `fix` branch를 생성하고 Pull Request로 반영한다.
-- 긴급 수정을 제외한 작업 branch는 하나의 논리적인 변경 목적마다 최신 `develop`에서 생성한다.
-- 같은 목적의 여러 `commit`은 하나의 branch에 포함할 수 있지만, 서로 독립적인 변경은 별도의 branch로 분리한다.
+- 작업 branch를 생성하기 전에 미커밋 변경과 기준 branch의 원격 상태를 확인하고 fast-forward 방식으로 동기화한다. 기존 변경이 있거나 동기화할 수 없으면 임의로 처리하지 않고 사용자에게 알린다.
+- 긴급 수정은 사용자가 명시적으로 결정하며 최신 `main`에서 `fix` branch를 생성한다.
+- 긴급 수정을 제외한 작업은 하나의 논리적인 변경 목적마다 최신 `develop`에서 branch를 생성한다.
+- 서로 독립적인 변경은 별도의 branch와 `commit`으로 분리한다.
 - 최초 `commit`처럼 작업 branch를 만들 수 없는 경우에는 이유를 설명하고, **사용자의 명시적인 지시를 받은 후** `main`에서 진행한다.
 - branch 이름은 `type/kebab-case-summary` 형식으로 작성한다.
 - `type`은 `feat`, `fix`, `docs`, `refactor`, `test`, `chore` 중에서 선택한다.
@@ -133,21 +128,11 @@
 
 ## Pull Request 및 merge 규칙
 
-- 모든 Pull Request는 merge 전에 merge 가능한 상태이고 필수 status check가 모두 통과했는지 확인한다.
-- 충돌이나 실패한 check가 있으면 merge하지 않고 사용자에게 알린다.
-- 긴급 수정 branch를 제외한 작업 branch는 변경 검증을 완료한 후 Pull Request를 통해 `develop`에 merge한다.
-- 작업 branch가 merge된 `develop`에서는 변경 간의 충돌과 통합 동작을 검증한다.
-- `develop`에서 `main`으로의 Pull Request는 사용자가 반영 범위를 확정하고, 해당 범위의 변경이 모두 `develop`에 통합되었으며, `main`과 `develop`의 차이가 확정된 범위와 일치할 때 생성한다.
-- Pull Request 생성 후 `develop`이 변경되면 현재 Pull Request의 변경 범위와 통합 검증 결과를 다시 확인한다.
-- `develop`에서 `main`으로 merge할 때는 현재 Pull Request에 포함된 변경이 사용자가 확정한 범위와 일치하고, 해당 변경을 기준으로 필요한 검증이 완료되었는지 확인한다.
-- `develop`에서 `main`으로의 Pull Request는 두 branch의 계보를 유지하기 위해 `merge commit` 방식으로 merge한다.
-- `develop`에서 `main`으로 merge한 직후 두 branch의 파일 내용이 동일하고 기존 `develop`이 최신 `main`의 조상인지 확인한다.
-- 위 조건을 만족하면 다음 작업 branch를 만들기 전에 `develop`을 최신 `main`으로 fast-forward한다. branch protection으로 직접 update할 수 없으면 `main`에서 `develop`으로 Pull Request를 생성해 동기화한다.
-- 작업 branch에서 `develop`으로의 Pull Request는 branch의 원래 commit과 통합 이력을 보존하기 위해 `merge commit` 방식으로 merge한다.
-- 긴급 수정 branch에서 `main`으로의 Pull Request는 branch의 원래 commit과 통합 이력을 보존하기 위해 `merge commit` 방식으로 merge한다.
-- 긴급 수정이 `main`에 merge되면 `main`에서 `develop`으로 Pull Request를 생성하고 `merge commit` 방식으로 반영한다.
+- 긴급 수정을 제외한 작업은 검증 후 Pull Request를 통해 `develop`에 반영한다.
+- 일반 변경의 `main` 반영은 사용자가 범위를 확정하고 merge를 승인한 경우에만 `develop`에서 Pull Request를 생성해 진행한다.
+- merge 전 변경 범위, 충돌 여부 및 필수 status check 성공을 확인한다. 실패하거나 범위가 달라졌으면 merge하지 않고 사용자에게 알린다.
+- 작업 branch에서 `develop`으로, `develop`에서 `main`으로, 긴급 수정 branch에서 `main`으로 반영할 때는 `merge commit` 방식을 사용한다.
+- `main` 병합 후 `develop`을 최신 `main`으로 동기화하고 두 branch의 파일 내용이 같은지 확인한다. 직접 update할 수 없으면 `main`에서 `develop`으로 Pull Request를 생성한다.
 - 다른 merge 방식이 필요하면 이유와 영향을 설명하고 사용자의 명시적인 지시를 받는다.
-- 작업 branch가 대상 branch에 merge되면 해당 작업 branch의 로컬과 원격 삭제를 사용자에게 제안한다.
-- 작업 branch를 삭제하기 전에 해당 Pull Request가 대상 branch에 merge되었는지 확인한다.
-- `rebase` 또는 `squash` merge로 일반 삭제가 불가능하면 merge 상태를 확인한 후 강제 삭제를 제안한다.
-- `main`과 `develop`은 작업 branch 삭제 대상에 포함하지 않는다.
+- 작업 branch가 대상 branch에 병합된 것을 확인한 후, 사용자가 승인하면 로컬과 원격 branch를 삭제한다. `main`과 `develop`은 삭제하지 않는다.
+- 일반 삭제가 불가능하면 강제 삭제의 위험과 영향을 설명하고 별도 승인을 받는다.
