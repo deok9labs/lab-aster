@@ -15,12 +15,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TempHelloConfig {
 
-    /**
-     * Spring이 인사말 구성 정보를 등록할 설정 객체를 생성한다.
-     */
-    public TempHelloConfig() {
-    }
-
     @Bean
     TempGreetingLogPort tempGreetingLogPort() {
         return new TempGreetingLogAdapter();

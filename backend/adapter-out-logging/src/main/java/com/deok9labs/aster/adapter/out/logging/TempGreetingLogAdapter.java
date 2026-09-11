@@ -14,12 +14,6 @@ public class TempGreetingLogAdapter implements TempGreetingLogPort {
 
     private static final Logger log = LoggerFactory.getLogger(TempGreetingLogAdapter.class);
 
-    /**
-     * application 로그를 사용하는 adapter를 생성한다.
-     */
-    public TempGreetingLogAdapter() {
-    }
-
     @Override
     public void log(TempGreeting greeting) {
         log.info("{}", greeting.message());
