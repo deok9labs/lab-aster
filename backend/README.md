@@ -9,6 +9,8 @@
 | Java Toolchain | Gradle Toolchain | Eclipse Temurin 21 |
 | Framework | Spring Boot | 4.1.1 |
 | Build | Gradle | Kotlin DSL 및 Gradle Wrapper |
+| Test | JUnit | JUnit 5 |
+| Logging | Log4j2 | Spring Boot Log4j2 starter |
 | Architecture | Hexagonal Architecture | Ports and Adapters |
 
 ## 임시 기본 구조
