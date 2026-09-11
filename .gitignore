@@ -3,6 +3,10 @@
 build/
 target/
 out/
+!**/src/main/**/out/
+!**/src/main/**/out/**
+!**/src/test/**/out/
+!**/src/test/**/out/**
 bin/
 
 # IDE
