@@ -18,11 +18,22 @@ final class TestHttpClient {
     }
 
     static HttpResponse<String> get(int port, String path) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+        return send(request(port, path).GET());
+    }
+
+    static HttpResponse<String> postJson(int port, String path, String json) throws IOException, InterruptedException {
+        return send(request(port, path)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json)));
+    }
+
+    private static HttpRequest.Builder request(int port, String path) {
+        return HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:" + port + path))
-                .timeout(TIMEOUT)
-                .GET()
-                .build();
-        return CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+                .timeout(TIMEOUT);
+    }
+
+    private static HttpResponse<String> send(HttpRequest.Builder builder) throws IOException, InterruptedException {
+        return CLIENT.send(builder.build(), HttpResponse.BodyHandlers.ofString());
     }
 }
