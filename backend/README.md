@@ -39,3 +39,5 @@ macOS 및 Linux:
 ./gradlew :bootstrap:bootRun
 ./gradlew test
 ```
+
+Swagger UI의 활성화 방법과 운영 환경 주의사항은 [`../doc/backend/swagger-ui.md`](../doc/backend/swagger-ui.md)를 참고합니다.
