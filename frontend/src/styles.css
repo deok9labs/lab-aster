@@ -1,172 +1,56 @@
 :root {
   font-family: Inter, Pretendard, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #24364d;
-  background: #eef7ff;
+  color: #263a52;
+  background: #ffffff;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
 
 * { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button { font: inherit; }
 
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-}
+/* 탐색과 콘텐츠의 경계는 장식적인 카드 대신 고정 면과 단일 경계선으로 구분한다. */
+.app-layout { min-height: 100vh; padding: 0 0 0 224px; }
+.side-navigation { position: fixed; inset: 0 auto 0 0; z-index: 5; width: 224px; padding: 16px 12px; border-right: 1px solid #dcdfe4; background: #f7f8f9; }
+.side-navigation nav { display: grid; gap: 0; }
+.navigation-section { display: grid; gap: 2px; padding: 8px 0; }
+.navigation-section:first-child { padding-top: 0; }
+.navigation-section + .navigation-section { border-top: 1px solid #dcdfe4; }
+.side-navigation .nav-item { position: relative; display: flex; width: 100%; height: 40px; align-items: center; gap: 10px; padding: 0 12px; border: 0; border-radius: 3px; color: #44546f; background: transparent; cursor: pointer; font-size: 0.875rem; font-weight: 500; text-align: left; }
+.side-navigation .nav-item:hover { color: #0c66e4; background: transparent; }
+.side-navigation .nav-item.active { color: #0c66e4; background: #e9f2ff; font-weight: 600; }
+.side-navigation .nav-item.active::before { position: absolute; top: 8px; bottom: 8px; left: 0; width: 3px; height: auto; border-radius: 0 2px 2px 0; background: #0c66e4; content: ""; }
+.side-navigation .nav-icon { width: 18px; height: 18px; flex: 0 0 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.side-navigation .menu-chevron { position: absolute; right: 10px; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 160ms ease; }
+.side-navigation .menu-chevron.open { transform: rotate(90deg); }
+.side-navigation .sub-navigation { display: grid; gap: 2px; margin: 2px 0 4px; padding-left: 14px; }
+.side-navigation .sub-navigation .sub-item { height: 36px; padding-left: 12px; font-size: 0.8125rem; }
 
-button { font: inherit; cursor: pointer; }
-
-.app-shell {
-  display: grid;
-  grid-template-columns: 82px minmax(0, 1fr);
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at 80% 12%, rgb(181 220 249 / 32%), transparent 28%),
-    linear-gradient(135deg, #fafdff 0%, #edf7ff 48%, #f8fcff 100%);
-}
-
-.sidebar {
-  position: sticky;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  padding: 18px 10px;
-  border-right: 1px solid #d8e8f5;
-  background: rgb(255 255 255 / 76%);
-  box-shadow: 6px 0 24px rgb(77 126 162 / 5%);
-  backdrop-filter: blur(16px);
-}
-
-.brand {
-  display: grid;
-  place-items: center;
-  padding-bottom: 28px;
-}
-
-.brand > span:last-child {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-}
-
-.brand-mark {
-  display: grid;
-  width: 35px;
-  height: 35px;
-  place-items: center;
-  border: 1px solid #b8d8ee;
-  border-radius: 11px;
-  color: #315d7f;
-  background: #e2f3ff;
-  box-shadow: 0 6px 16px rgb(76 137 180 / 13%);
-  font-weight: 750;
-}
-
-.nav-item {
-  display: grid;
+.main-content {
   width: 100%;
-  min-height: 56px;
-  place-items: center;
-  gap: 4px;
-  padding: 7px 2px;
-  border: 1px solid transparent;
-  border-radius: 11px;
-  color: #758ba0;
-  background: transparent;
-  font-size: 0.6rem;
-  text-align: center;
+  min-height: 100vh;
+  padding: 24px;
 }
 
-.nav-item:hover { background: #edf7fe; }
-
-.nav-item.active {
-  border-color: #c4e0f3;
-  color: #315d7f;
-  background: #dff1fd;
-  box-shadow: 0 6px 14px rgb(78 137 177 / 9%);
-}
-
-.nav-icon {
-  color: #4d7898;
-  font-size: 1rem;
-}
-
-.sidebar-footer {
-  display: grid;
-  margin-top: auto;
-  place-items: center;
-  gap: 7px;
-  color: #91a5b6;
-  font-size: 0.54rem;
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #63b58b;
-  box-shadow: 0 0 0 4px #e2f4ea;
-}
-
-.workspace { min-width: 0; }
-
-.topbar {
+.dashboard-header {
   display: flex;
-  min-height: 66px;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 28px;
-  border-bottom: 1px solid #dceaf5;
-  background: rgb(255 255 255 / 68%);
-  backdrop-filter: blur(14px);
+  min-height: 72px;
+  margin-top: -6px;
+  padding: 0 4px 6px;
 }
 
-.breadcrumb {
-  margin: 0 0 4px;
-  color: #99adbd;
-  font-size: 0.62rem;
-}
-
-h1 {
-  margin: 0;
-  color: #294861;
-  font-size: 0.92rem;
-  font-weight: 680;
-}
-
-.environment {
-  padding: 5px 9px;
-  border: 1px solid #d1e5f3;
-  border-radius: 7px;
-  color: #69869c;
-  background: rgb(255 255 255 / 72%);
-  font-size: 0.62rem;
-}
-
-.dashboard-page {
-  min-height: calc(100vh - 66px);
-}
-
-@media (max-width: 640px) {
-  .app-shell { grid-template-columns: 1fr; }
-
-  .sidebar {
-    position: static;
-    height: auto;
-    flex-direction: row;
-    align-items: center;
-    padding: 10px 14px;
-    border-right: 0;
-    border-bottom: 1px solid #d8e8f5;
-  }
-
-  .brand { padding: 0; }
-  .sidebar nav { margin-left: auto; }
-  .nav-item { min-width: 66px; min-height: 44px; }
-  .sidebar-footer { display: none; }
-  .topbar { min-height: 58px; padding: 9px 18px; }
-  .dashboard-page { min-height: calc(100vh - 113px); }
+.dashboard-title-row { display: flex; align-items: flex-start; gap: 7px; }
+.eyebrow { margin-top: 7px; color: #8ea5b7; font-size: 0.48rem; font-weight: 800; letter-spacing: 0.12em; }
+h1 { margin: 0; color: #294861; font-size: clamp(1.75rem, 3vw, 2.15rem); font-weight: 680; letter-spacing: -0.03em; }
+@media (max-width: 720px) {
+  .app-layout { padding: 74px 0 0; }
+  .side-navigation { inset: 0 0 auto; width: 100%; padding: 8px 10px; border-right: 0; border-bottom: 1px solid #dcdfe4; }
+  .side-navigation nav { display: flex; gap: 4px; overflow-x: auto; }
+  .navigation-section { display: flex; flex: 0 0 auto; padding: 0 4px; }
+  .navigation-section + .navigation-section { border-top: 0; border-left: 1px solid #dcdfe4; }
+  .side-navigation .nav-item { width: auto; min-width: max-content; }
+  .side-navigation .sub-navigation { display: none; }
+  .main-content { min-height: calc(100vh - 74px); padding: 18px 14px; }
 }
