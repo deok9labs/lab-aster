@@ -5,7 +5,6 @@ plugins {
 dependencies {
     implementation(project(":application"))
     implementation(project(":adapter-in-web"))
-    implementation(project(":adapter-out-logging"))
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

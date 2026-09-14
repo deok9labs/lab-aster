@@ -1,0 +1,56 @@
+:root {
+  font-family: Inter, Pretendard, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #263a52;
+  background: #ffffff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button { font: inherit; }
+
+/* 탐색과 콘텐츠의 경계는 장식적인 카드 대신 고정 면과 단일 경계선으로 구분한다. */
+.app-layout { min-height: 100vh; padding: 0 0 0 224px; }
+.side-navigation { position: fixed; inset: 0 auto 0 0; z-index: 5; width: 224px; padding: 16px 12px; border-right: 1px solid #dcdfe4; background: #f7f8f9; }
+.side-navigation nav { display: grid; gap: 0; }
+.navigation-section { display: grid; gap: 2px; padding: 8px 0; }
+.navigation-section:first-child { padding-top: 0; }
+.navigation-section + .navigation-section { border-top: 1px solid #dcdfe4; }
+.side-navigation .nav-item { position: relative; display: flex; width: 100%; height: 40px; align-items: center; gap: 10px; padding: 0 12px; border: 0; border-radius: 3px; color: #44546f; background: transparent; cursor: pointer; font-size: 0.875rem; font-weight: 500; text-align: left; }
+.side-navigation .nav-item:hover { color: #0c66e4; background: transparent; }
+.side-navigation .nav-item.active { color: #0c66e4; background: #e9f2ff; font-weight: 600; }
+.side-navigation .nav-item.active::before { position: absolute; top: 8px; bottom: 8px; left: 0; width: 3px; height: auto; border-radius: 0 2px 2px 0; background: #0c66e4; content: ""; }
+.side-navigation .nav-icon { width: 18px; height: 18px; flex: 0 0 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.side-navigation .menu-chevron { position: absolute; right: 10px; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 160ms ease; }
+.side-navigation .menu-chevron.open { transform: rotate(90deg); }
+.side-navigation .sub-navigation { display: grid; gap: 2px; margin: 2px 0 4px; padding-left: 14px; }
+.side-navigation .sub-navigation .sub-item { height: 36px; padding-left: 12px; font-size: 0.8125rem; }
+
+.main-content {
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  min-height: 72px;
+  margin-top: -6px;
+  padding: 0 4px 6px;
+}
+
+.dashboard-title-row { display: flex; align-items: flex-start; gap: 7px; }
+.eyebrow { margin-top: 7px; color: #8ea5b7; font-size: 0.48rem; font-weight: 800; letter-spacing: 0.12em; }
+h1 { margin: 0; color: #294861; font-size: clamp(1.75rem, 3vw, 2.15rem); font-weight: 680; letter-spacing: -0.03em; }
+@media (max-width: 720px) {
+  .app-layout { padding: 74px 0 0; }
+  .side-navigation { inset: 0 0 auto; width: 100%; padding: 8px 10px; border-right: 0; border-bottom: 1px solid #dcdfe4; }
+  .side-navigation nav { display: flex; gap: 4px; overflow-x: auto; }
+  .navigation-section { display: flex; flex: 0 0 auto; padding: 0 4px; }
+  .navigation-section + .navigation-section { border-top: 0; border-left: 1px solid #dcdfe4; }
+  .side-navigation .nav-item { width: auto; min-width: max-content; }
+  .side-navigation .sub-navigation { display: none; }
+  .main-content { min-height: calc(100vh - 74px); padding: 18px 14px; }
+}
