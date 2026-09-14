@@ -1,6 +1,8 @@
 # Build
 .gradle/
 build/
+dist/
+node_modules/
 target/
 out/
 !**/src/main/**/out/
