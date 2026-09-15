@@ -134,8 +134,7 @@
 - 작업 branch에서 수행한 작업은 검증 후 Pull Request로 반영한다. 긴급 수정을 제외한 작업은 `develop`을, 긴급 수정은 `main`을 대상으로 한다.
 - Pull Request 제목은 `commit 메시지 규칙`의 `type: summary` 형식을 따르고, 본문에는 변경 범위와 검증 결과를 기록한다.
 - 일반 변경의 `main` 반영은 사용자가 범위를 확정하고 merge를 승인한 경우에만 `develop`에서 Pull Request로 진행한다.
-- merge 전 필수 status check 성공과 충돌 없음을 확인한다. status check가 실패했거나 충돌이 있거나 승인 시점과 반영 범위가 달라졌으면 merge하지 않고 사용자에게 알린다.
-- status check가 다루지 않는 변경 범위는 `검증 규칙`에 따라 직접 검증한다.
+- merge 전 충돌이 없고 승인 시점과 반영 범위가 같은지 확인한다. 어긋나면 merge하지 않고 사용자에게 알린다.
 - Pull Request를 통한 반영은 `merge commit` 방식을 사용한다.
 - `main` 병합 후 `develop`을 최신 `main`으로 동기화한다. 직접 update할 수 없으면 `main`에서 `develop`으로 Pull Request를 생성한다. 이 동기화와 그에 필요한 Pull Request는 해당 `main` 반영 승인에 포함된 것으로 본다.
 - 다른 merge 방식이 필요하면 이유와 영향을 설명하고 사용자의 명시적인 지시를 받는다.
