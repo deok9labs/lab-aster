@@ -4,5 +4,6 @@ include(
     "domain",
     "application",
     "adapter-in-web",
+    "adapter-out-persistence",
     "bootstrap",
 )

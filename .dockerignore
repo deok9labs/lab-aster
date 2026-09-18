@@ -1,0 +1,7 @@
+.git
+.gradle
+.idea
+**/build/*
+!bootstrap/build/libs/
+!bootstrap/build/libs/aster.jar
+*.iml
