@@ -9,8 +9,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "ASTER_OPENAPI_ENABLED=false")
-class SwaggerUiDisabledIntegrationTest {
+        properties = {
+                "ASTER_OPENAPI_ENABLED=false",
+                "spring.autoconfigure.exclude="
+                        + "org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration,"
+                        + "org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration,"
+                        + "org.springframework.boot.data.jpa.autoconfigure.DataJpaRepositoriesAutoConfiguration",
+        })
+class SwaggerUiDisabledIntegrationTest extends DatabaseIndependentWebIntegrationTest {
 
     @Value("${local.server.port}")
     private int port;
