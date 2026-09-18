@@ -74,4 +74,4 @@ CREATE DATABASE aster OWNER aster_app;
 | `DB_USER` | 애플리케이션 전용 역할 | `aster_app` |
 | `DB_PASSWORD` | 애플리케이션 역할 비밀번호 | 문서 및 저장소에 기록하지 않음 |
 
-현재 문서는 데이터베이스 제품과 로컬 설치 기준만 정한다. JDBC 드라이버, migration 도구와 Spring datasource 설정은 영속성 adapter 구현 단계에서 추가한다.
+애플리케이션은 JPA와 PostgreSQL JDBC driver를 사용한다. Hibernate의 `ddl-auto`는 `validate`로 고정해 mapping 일치 여부만 확인하며 table을 생성하거나 변경하지 않는다. Schema와 기준 데이터는 운영자가 직접 관리하고 Flyway 같은 migration 도구는 사용하지 않는다.
