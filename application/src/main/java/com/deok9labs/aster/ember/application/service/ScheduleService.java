@@ -1,33 +1,30 @@
 package com.deok9labs.aster.ember.application.service;
 
 import com.deok9labs.aster.ember.domain.ScheduleSlot;
-import com.deok9labs.aster.ember.domain.ScheduleTime;
 import com.deok9labs.aster.ember.domain.ScheduleWeek;
 import com.deok9labs.aster.ember.domain.WeekPeriod;
-import com.deok9labs.aster.ember.application.port.in.GetCurrentScheduleUseCase;
+import com.deok9labs.aster.ember.application.port.in.GetScheduleUseCase;
 import com.deok9labs.aster.ember.application.port.in.ReplaceMemberScheduleUseCase;
 import com.deok9labs.aster.ember.application.port.in.command.ReplaceMemberScheduleCommand;
-import com.deok9labs.aster.ember.application.port.in.result.CurrentScheduleResult;
+import com.deok9labs.aster.ember.application.port.in.result.ScheduleResult;
 import com.deok9labs.aster.ember.application.port.in.result.ReplaceMemberScheduleResult;
-import com.deok9labs.aster.ember.application.port.out.LoadCurrentSchedulePort;
+import com.deok9labs.aster.ember.application.port.out.LoadSchedulePort;
 import com.deok9labs.aster.ember.application.port.out.SaveMemberSchedulePort;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
 /** 이번 주와 다음 주 일정 조회 및 전체 교체 흐름을 조정하는 application service다. */
-public final class ScheduleService implements GetCurrentScheduleUseCase, ReplaceMemberScheduleUseCase {
+public final class ScheduleService implements GetScheduleUseCase, ReplaceMemberScheduleUseCase {
 
-    private final LoadCurrentSchedulePort loadPort;
+    private final LoadSchedulePort loadPort;
     private final SaveMemberSchedulePort savePort;
     private final Clock clock;
 
     public ScheduleService(
-            LoadCurrentSchedulePort loadPort,
+            LoadSchedulePort loadPort,
             SaveMemberSchedulePort savePort,
             Clock clock) {
         this.loadPort = loadPort;
@@ -36,23 +33,22 @@ public final class ScheduleService implements GetCurrentScheduleUseCase, Replace
     }
 
     @Override
-    public CurrentScheduleResult getSchedule(ScheduleWeek scheduleWeek) {
+    public ScheduleResult getSchedule(ScheduleWeek scheduleWeek) {
         WeekPeriod week = resolveWeek(scheduleWeek);
-        LoadCurrentSchedulePort.CurrentScheduleData data = loadPort.loadCurrentSchedule(week);
+        LoadSchedulePort.ScheduleData data = loadPort.loadSchedule(week);
 
         // Persistence 전용 data가 Web까지 전파되지 않도록 application 출력 계약으로 변환한다.
-        return new CurrentScheduleResult(
+        return new ScheduleResult(
                 week.start(),
                 week.end(),
-                data.members().stream().map(member -> new CurrentScheduleResult.Member(
+                data.members().stream().map(member -> new ScheduleResult.Member(
                         member.id(), member.name(), member.server(), member.position(),
                         member.submitted(), member.updatedAt())).toList(),
                 data.availability().stream()
-                        .map(availability -> new CurrentScheduleResult.Availability(
+                        .map(availability -> new ScheduleResult.Availability(
                                 availability.memberId(),
                                 availability.date(),
-                                toRanges(availability.slots())))
-                        .filter(availability -> !availability.ranges().isEmpty())
+                                availability.slots()))
                         .toList());
     }
 
@@ -64,8 +60,7 @@ public final class ScheduleService implements GetCurrentScheduleUseCase, Replace
             throw new ScheduleWeekMismatchException();
         }
 
-        List<ScheduleSlot> slots = List.copyOf(new LinkedHashSet<>(
-                command.ranges().stream().flatMap(range -> range.toSlots().stream()).toList()));
+        List<ScheduleSlot> slots = List.copyOf(new LinkedHashSet<>(command.slots()));
         slots.forEach(slot -> slot.requireWithin(week));
 
         // 모든 변경 행이 동일한 수정 시각을 갖도록 transaction 호출 전에 한 번만 계산한다.
@@ -82,36 +77,4 @@ public final class ScheduleService implements GetCurrentScheduleUseCase, Replace
         return scheduleWeek.resolve(LocalDate.now(clock));
     }
 
-    private List<CurrentScheduleResult.TimeRange> toRanges(List<LocalTime> storedSlots) {
-        List<Integer> minutes = storedSlots.stream()
-                // 이전 계약에서 저장된 다른 시간대가 있어도 새 화면의 조회 전체를 실패시키지 않는다.
-                .filter(time -> !time.isBefore(LocalTime.of(18, 0)))
-                .map(time -> (time.getHour() * 60) + time.getMinute())
-                .distinct()
-                .sorted(Comparator.naturalOrder())
-                .toList();
-        if (minutes.isEmpty()) {
-            return List.of();
-        }
-
-        java.util.ArrayList<CurrentScheduleResult.TimeRange> ranges = new java.util.ArrayList<>();
-        int start = minutes.getFirst();
-        int previous = start;
-        for (int index = 1; index < minutes.size(); index++) {
-            int current = minutes.get(index);
-            if (current != previous + 30) {
-                ranges.add(timeRange(start, previous + 30));
-                start = current;
-            }
-            previous = current;
-        }
-        ranges.add(timeRange(start, previous + 30));
-        return List.copyOf(ranges);
-    }
-
-    private CurrentScheduleResult.TimeRange timeRange(int startMinute, int endMinute) {
-        return new CurrentScheduleResult.TimeRange(
-                new ScheduleTime(startMinute),
-                new ScheduleTime(endMinute));
-    }
 }

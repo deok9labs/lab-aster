@@ -5,9 +5,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.deok9labs.aster.ember.application.port.in.GetCurrentScheduleUseCase;
+import com.deok9labs.aster.ember.application.port.in.GetScheduleUseCase;
 import com.deok9labs.aster.ember.application.port.in.ReplaceMemberScheduleUseCase;
-import com.deok9labs.aster.ember.application.port.in.result.CurrentScheduleResult;
+import com.deok9labs.aster.ember.application.port.in.result.ScheduleResult;
 import com.deok9labs.aster.ember.application.port.in.result.ReplaceMemberScheduleResult;
 import com.deok9labs.aster.ember.domain.ScheduleTime;
 import java.time.LocalDate;
@@ -25,17 +25,16 @@ class ScheduleControllerTest {
 
     @BeforeEach
     void setUp() {
-        GetCurrentScheduleUseCase getUseCase = scheduleWeek -> new CurrentScheduleResult(
+        GetScheduleUseCase getUseCase = scheduleWeek -> new ScheduleResult(
                 scheduleWeek == com.deok9labs.aster.ember.domain.ScheduleWeek.CURRENT
                         ? LocalDate.of(2026, 9, 14) : LocalDate.of(2026, 9, 21),
                 scheduleWeek == com.deok9labs.aster.ember.domain.ScheduleWeek.CURRENT
                         ? LocalDate.of(2026, 9, 20) : LocalDate.of(2026, 9, 27),
                 List.of(),
-                List.of(new CurrentScheduleResult.Availability(
+                List.of(new ScheduleResult.Availability(
                         1,
                         LocalDate.of(2026, 9, 21),
-                        List.of(new CurrentScheduleResult.TimeRange(
-                                ScheduleTime.parse("21:30"), ScheduleTime.parse("24:00"))))));
+                        List.of(ScheduleTime.parse("21:30"), ScheduleTime.parse("24:00")))));
         ReplaceMemberScheduleUseCase replaceUseCase = command -> new ReplaceMemberScheduleResult(
                 command.memberId(), command.expectedWeekStart(), 1,
                 LocalDateTime.of(2026, 9, 18, 21, 30));
@@ -46,12 +45,12 @@ class ScheduleControllerTest {
     }
 
     @Test
-    void getsNextWeekScheduleWithMidnightRangeEnd() throws Exception {
+    void getsNextWeekScheduleWithMidnightSlot() throws Exception {
         mockMvc.perform(get("/api/v1/schedules/next"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.weekStart").value("2026-09-21"))
-                .andExpect(jsonPath("$.availability[0].ranges[0].startTime").value("21:30"))
-                .andExpect(jsonPath("$.availability[0].ranges[0].endTime").value("24:00"));
+                .andExpect(jsonPath("$.availability[0].slots[0]").value("21:30"))
+                .andExpect(jsonPath("$.availability[0].slots[1]").value("24:00"));
     }
 
     @Test
@@ -61,8 +60,9 @@ class ScheduleControllerTest {
                         .content("""
                                 {
                                   "expectedWeekStart": "2026-09-21",
-                                  "ranges": [
-                                    {"date": "2026-09-21", "startTime": "21:30", "endTime": "24:00"}
+                                  "slots": [
+                                    {"date": "2026-09-21", "slotTime": "21:30"},
+                                    {"date": "2026-09-21", "slotTime": "24:00"}
                                   ]
                                 }
                                 """))
@@ -78,8 +78,8 @@ class ScheduleControllerTest {
                         .content("""
                                 {
                                   "expectedWeekStart": "2026-09-14",
-                                  "ranges": [
-                                    {"date": "2026-09-18", "startTime": "invalid", "endTime": "19:00"}
+                                  "slots": [
+                                    {"date": "2026-09-18", "slotTime": "invalid"}
                                   ]
                                 }
                                 """))

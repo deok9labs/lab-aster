@@ -1,6 +1,6 @@
 package com.deok9labs.aster.ember.configuration;
 
-import com.deok9labs.aster.ember.application.port.out.LoadCurrentSchedulePort;
+import com.deok9labs.aster.ember.application.port.out.LoadSchedulePort;
 import com.deok9labs.aster.ember.application.port.out.SaveMemberSchedulePort;
 import com.deok9labs.aster.ember.application.service.ScheduleService;
 import java.time.Clock;
@@ -19,7 +19,7 @@ public class EmberConfig {
 
     @Bean
     ScheduleService scheduleService(
-            LoadCurrentSchedulePort loadPort,
+            LoadSchedulePort loadPort,
             SaveMemberSchedulePort savePort,
             Clock emberClock) {
         return new ScheduleService(loadPort, savePort, emberClock);
