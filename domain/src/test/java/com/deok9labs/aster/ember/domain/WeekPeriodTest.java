@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class WeekPeriodTest {
@@ -22,29 +20,22 @@ class WeekPeriodTest {
     void rejectsSlotOutsideWeek() {
         WeekPeriod week = WeekPeriod.containing(LocalDate.of(2026, 9, 18));
         ScheduleSlot slot = new ScheduleSlot(
-                LocalDate.of(2026, 9, 21), LocalTime.of(19, 0));
+                LocalDate.of(2026, 9, 21), ScheduleTime.parse("19:00"));
 
         assertThrows(IllegalArgumentException.class, () -> slot.requireWithin(week));
     }
 
     @Test
     void rejectsTimeOutsideThirtyMinuteGrid() {
-        assertThrows(IllegalArgumentException.class, () -> new ScheduleSlot(
-                LocalDate.of(2026, 9, 18), LocalTime.of(19, 15)));
+        assertThrows(IllegalArgumentException.class, () -> ScheduleTime.parse("19:15"));
     }
 
     @Test
-    void expandsRangeEndingAtMidnightIntoPersistableSlots() {
-        AvailabilityRange range = new AvailabilityRange(
-                LocalDate.of(2026, 9, 18),
-                ScheduleTime.parse("21:30"),
-                ScheduleTime.parse("24:00"));
+    void keepsMidnightAsSameDateSlot() {
+        ScheduleSlot slot = new ScheduleSlot(
+                LocalDate.of(2026, 9, 18), ScheduleTime.parse("24:00"));
 
-        assertEquals(List.of(
-                LocalTime.of(21, 30),
-                LocalTime.of(22, 0),
-                LocalTime.of(22, 30),
-                LocalTime.of(23, 0),
-                LocalTime.of(23, 30)), range.toSlots().stream().map(ScheduleSlot::time).toList());
+        assertEquals(LocalDate.of(2026, 9, 18), slot.date());
+        assertEquals("24:00", slot.slotTime().toString());
     }
 }

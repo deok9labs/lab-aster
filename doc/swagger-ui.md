@@ -80,10 +80,7 @@ GET /api/v1/schedules/{scheduleWeek}
     {
       "memberId": 1,
       "date": "2026-09-21",
-      "ranges": [
-        { "startTime": "18:00", "endTime": "19:00" },
-        { "startTime": "21:30", "endTime": "24:00" }
-      ]
+      "slots": ["18:00", "18:30", "19:00", "23:30", "24:00"]
     }
   ]
 }
@@ -101,26 +98,22 @@ Content-Type: application/json
 ```json
 {
   "expectedWeekStart": "2026-09-21",
-  "ranges": [
-    {
-      "date": "2026-09-21",
-      "startTime": "18:00",
-      "endTime": "19:00"
-    },
-    {
-      "date": "2026-09-21",
-      "startTime": "21:30",
-      "endTime": "24:00"
-    }
+  "slots": [
+    { "date": "2026-09-21", "slotTime": "18:00" },
+    { "date": "2026-09-21", "slotTime": "18:30" },
+    { "date": "2026-09-21", "slotTime": "19:00" },
+    { "date": "2026-09-21", "slotTime": "23:30" },
+    { "date": "2026-09-21", "slotTime": "24:00" }
   ]
 }
 ```
 
 - `expectedWeekStart`는 저장 대상을 지정하지 않고 화면을 연 뒤 주차가 바뀌었는지 검증한다.
-- `ranges`는 교체 후 남길 전체 가용 범위이며 빈 배열은 해당 팀원의 선택을 모두 해제한다.
-- 시작과 종료는 30분 단위이고 `18:00 <= startTime < endTime <= 24:00`이어야 한다.
-- 한 범위의 날짜는 선택한 주의 월요일부터 일요일 사이여야 한다.
-- 겹치거나 맞닿은 범위는 저장 과정에서 동일한 30분 슬롯으로 정규화된다.
+- `slots`는 교체 후 남길 전체 선택 시각이며 빈 배열은 해당 팀원의 선택을 모두 해제한다.
+- `slotTime`은 `18:00`부터 `24:00`까지 30분 단위여야 한다.
+- `24:00`도 다른 시각과 동일하게 선택한 날짜의 슬롯으로 저장하며 다음 날짜의 `00:00`으로 바꾸지 않는다.
+- 각 슬롯의 날짜는 선택한 주의 월요일부터 일요일 사이여야 한다.
+- 중복 슬롯은 저장 전에 제거한다.
 
 응답 예시:
 
@@ -146,6 +139,6 @@ Content-Type: application/json
 
 | HTTP 상태 | 코드 | 조건 |
 | --- | --- | --- |
-| `400` | `INVALID_SCHEDULE_REQUEST` | 주차 값, 날짜, 시간 형식 또는 시간 범위가 올바르지 않음 |
+| `400` | `INVALID_SCHEDULE_REQUEST` | 주차 값, 날짜 또는 슬롯 시각이 올바르지 않음 |
 | `404` | `MEMBER_NOT_FOUND` | 활성 상태인 팀원이 존재하지 않음 |
 | `409` | `SCHEDULE_WEEK_MISMATCH` | `expectedWeekStart`와 서버가 계산한 주차가 다름 |
