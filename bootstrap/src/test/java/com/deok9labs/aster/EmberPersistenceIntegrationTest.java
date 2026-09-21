@@ -65,7 +65,7 @@ class EmberPersistenceIntegrationTest {
                 MEMBER_ID,
                 week,
                 List.of(
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(0, 0)),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(18, 0)),
                         new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(23, 0))),
                 firstUpdate).orElseThrow();
 
@@ -74,11 +74,11 @@ class EmberPersistenceIntegrationTest {
                 MEMBER_ID,
                 week,
                 List.of(
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(3, 0)),
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(3, 30)),
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(4, 0)),
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(4, 30)),
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(5, 0))),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(18, 0)),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(18, 30)),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(19, 0)),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(19, 30)),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(20, 0))),
                 secondUpdate).orElseThrow();
 
         LoadCurrentSchedulePort.CurrentScheduleData loaded =
@@ -93,8 +93,8 @@ class EmberPersistenceIntegrationTest {
                 .orElseThrow();
 
         assertEquals(5, availability.slots().size());
-        assertEquals(LocalTime.of(3, 0), availability.slots().getFirst());
-        assertEquals(LocalTime.of(5, 0), availability.slots().getLast());
+        assertEquals(LocalTime.of(18, 0), availability.slots().getFirst());
+        assertEquals(LocalTime.of(20, 0), availability.slots().getLast());
         assertEquals(secondUpdate, member.updatedAt());
         assertEquals(2, jdbcTemplate.queryForObject(
                 """
