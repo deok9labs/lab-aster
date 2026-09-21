@@ -26,6 +26,9 @@ class SwaggerUiIntegrationTest extends DatabaseIndependentWebIntegrationTest {
 
         assertEquals(200, response.statusCode());
         assertTrue(response.body().contains("\"openapi\""));
+        assertTrue(response.body().contains("/api/v1/schedules/{scheduleWeek}"));
+        assertTrue(response.body().contains("expectedWeekStart"));
+        assertTrue(response.body().contains("24:00"));
     }
 
     @Test

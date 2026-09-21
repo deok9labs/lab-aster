@@ -1,6 +1,6 @@
 package com.deok9labs.aster.ember.adapter.in.web;
 
-import com.deok9labs.aster.ember.application.service.CurrentWeekMismatchException;
+import com.deok9labs.aster.ember.application.service.ScheduleWeekMismatchException;
 import com.deok9labs.aster.ember.application.service.MemberNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +18,9 @@ public class ApiExceptionHandler {
         return error(HttpStatus.NOT_FOUND, "MEMBER_NOT_FOUND", exception.getMessage());
     }
 
-    @ExceptionHandler(CurrentWeekMismatchException.class)
-    ResponseEntity<ApiErrorResponse> handleCurrentWeekMismatch(CurrentWeekMismatchException exception) {
-        return error(HttpStatus.CONFLICT, "CURRENT_WEEK_MISMATCH", exception.getMessage());
+    @ExceptionHandler(ScheduleWeekMismatchException.class)
+    ResponseEntity<ApiErrorResponse> handleScheduleWeekMismatch(ScheduleWeekMismatchException exception) {
+        return error(HttpStatus.CONFLICT, "SCHEDULE_WEEK_MISMATCH", exception.getMessage());
     }
 
     @ExceptionHandler({
