@@ -1,13 +1,12 @@
 package com.deok9labs.aster.ember.domain;
 
-import java.time.LocalTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * 일정 화면에서 사용하는 18:00부터 24:00까지의 30분 단위 시각이다.
  *
- * <p>{@link LocalTime}이 표현하지 못하는 하루 끝 {@code 24:00}을 포함하기 위해
+ * <p>Java 표준 시각 type이 표현하지 못하는 하루 끝 {@code 24:00}을 포함하기 위해
  * 자정부터의 분으로 보존한다.</p>
  */
 public record ScheduleTime(int minuteOfDay) implements Comparable<ScheduleTime> {
@@ -39,14 +38,6 @@ public record ScheduleTime(int minuteOfDay) implements Comparable<ScheduleTime> 
             throw new IllegalArgumentException("일정 시간 형식은 HH:mm이어야 합니다.");
         }
         return new ScheduleTime((hour * 60) + minute);
-    }
-
-    /** DB 슬롯으로 저장 가능한 24:00 미만의 시각으로 변환한다. */
-    public LocalTime toSlotTime() {
-        if (minuteOfDay == LAST_MINUTE) {
-            throw new IllegalStateException("24:00은 일정 범위의 종료 시각으로만 사용할 수 있습니다.");
-        }
-        return LocalTime.of(minuteOfDay / 60, minuteOfDay % 60);
     }
 
     @Override

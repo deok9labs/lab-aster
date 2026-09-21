@@ -1,25 +1,18 @@
 package com.deok9labs.aster.ember.domain;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 /**
- * 특정 날짜에 팀원이 선택한 30분 단위의 시작 시각이다.
+ * 특정 날짜에 팀원이 선택한 18:00부터 24:00까지의 30분 단위 시각이다.
  *
  * @param date 가능한 날짜
- * @param time 18:00 이상 24:00 미만에서 00분 또는 30분에 시작하는 시각
+ * @param slotTime 날짜를 넘기지 않고 선택한 화면상의 시각
  */
-public record ScheduleSlot(LocalDate date, LocalTime time) {
+public record ScheduleSlot(LocalDate date, ScheduleTime slotTime) {
 
     public ScheduleSlot {
-        if (date == null || time == null) {
+        if (date == null || slotTime == null) {
             throw new IllegalArgumentException("일정 날짜와 시간이 필요합니다.");
-        }
-        if (time.isBefore(LocalTime.of(18, 0))
-                || (time.getMinute() != 0 && time.getMinute() != 30)
-                || time.getSecond() != 0
-                || time.getNano() != 0) {
-            throw new IllegalArgumentException("일정 시간은 18:00부터 24:00 전까지 30분 단위여야 합니다.");
         }
     }
 

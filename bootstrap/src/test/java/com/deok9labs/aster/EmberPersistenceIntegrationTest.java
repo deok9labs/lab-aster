@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.deok9labs.aster.ember.adapter.out.persistence.EmberPersistenceAdapter;
 import com.deok9labs.aster.ember.domain.ScheduleSlot;
+import com.deok9labs.aster.ember.domain.ScheduleTime;
 import com.deok9labs.aster.ember.domain.WeekPeriod;
-import com.deok9labs.aster.ember.application.port.out.LoadCurrentSchedulePort;
+import com.deok9labs.aster.ember.application.port.out.LoadSchedulePort;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,8 +65,8 @@ class EmberPersistenceIntegrationTest {
                 MEMBER_ID,
                 week,
                 List.of(
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(18, 0)),
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(23, 0))),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), ScheduleTime.parse("18:00")),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), ScheduleTime.parse("24:00"))),
                 firstUpdate).orElseThrow();
 
         LocalDateTime secondUpdate = firstUpdate.plusMinutes(1);
@@ -74,27 +74,36 @@ class EmberPersistenceIntegrationTest {
                 MEMBER_ID,
                 week,
                 List.of(
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(18, 0)),
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(18, 30)),
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(19, 0)),
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(19, 30)),
-                        new ScheduleSlot(LocalDate.of(2026, 9, 18), LocalTime.of(20, 0))),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), ScheduleTime.parse("18:00")),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), ScheduleTime.parse("18:30")),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), ScheduleTime.parse("19:00")),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), ScheduleTime.parse("23:30")),
+                        new ScheduleSlot(LocalDate.of(2026, 9, 18), ScheduleTime.parse("24:00"))),
                 secondUpdate).orElseThrow();
 
-        LoadCurrentSchedulePort.CurrentScheduleData loaded =
-                persistenceAdapter.loadCurrentSchedule(week);
-        LoadCurrentSchedulePort.MemberData member = loaded.members().stream()
+        LoadSchedulePort.ScheduleData loaded = persistenceAdapter.loadSchedule(week);
+        LoadSchedulePort.MemberData member = loaded.members().stream()
                 .filter(candidate -> candidate.id() == MEMBER_ID)
                 .findFirst()
                 .orElseThrow();
-        LoadCurrentSchedulePort.AvailabilityData availability = loaded.availability().stream()
+        LoadSchedulePort.AvailabilityData availability = loaded.availability().stream()
                 .filter(candidate -> candidate.memberId() == MEMBER_ID)
                 .findFirst()
                 .orElseThrow();
 
         assertEquals(5, availability.slots().size());
-        assertEquals(LocalTime.of(18, 0), availability.slots().getFirst());
-        assertEquals(LocalTime.of(20, 0), availability.slots().getLast());
+        assertEquals(ScheduleTime.parse("18:00"), availability.slots().getFirst());
+        assertEquals(ScheduleTime.parse("24:00"), availability.slots().getLast());
+        assertEquals(1, jdbcTemplate.queryForObject(
+                """
+                        select count(*) from availability_slots
+                        where member_id = ? and week_start = ?
+                          and available_date = ? and slot_time = time '24:00'
+                        """,
+                Integer.class,
+                MEMBER_ID,
+                WEEK_START,
+                LocalDate.of(2026, 9, 18)));
         assertEquals(secondUpdate, member.updatedAt());
         assertEquals(2, jdbcTemplate.queryForObject(
                 """

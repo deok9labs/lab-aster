@@ -1,18 +1,18 @@
 package com.deok9labs.aster.ember.application.port.in.result;
 
+import com.deok9labs.aster.ember.domain.ScheduleTime;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import com.deok9labs.aster.ember.domain.ScheduleTime;
 
-/** 현재 주 일정 조회 유스케이스의 출력 계약이다. */
-public record CurrentScheduleResult(
+/** 선택한 이번 주 또는 다음 주 일정 조회 유스케이스의 출력 계약이다. */
+public record ScheduleResult(
         LocalDate weekStart,
         LocalDate weekEnd,
         List<Member> members,
         List<Availability> availability) {
 
-    public CurrentScheduleResult {
+    public ScheduleResult {
         members = List.copyOf(members);
         availability = List.copyOf(availability);
     }
@@ -26,14 +26,10 @@ public record CurrentScheduleResult(
             LocalDateTime updatedAt) {
     }
 
-    public record Availability(int memberId, LocalDate date, List<TimeRange> ranges) {
+    public record Availability(int memberId, LocalDate date, List<ScheduleTime> slots) {
 
         public Availability {
-            ranges = List.copyOf(ranges);
+            slots = List.copyOf(slots);
         }
-    }
-
-    /** 조회 응답에서 {@code 24:00} 종료를 손실 없이 표현하는 연속 가용 구간이다. */
-    public record TimeRange(ScheduleTime startTime, ScheduleTime endTime) {
     }
 }

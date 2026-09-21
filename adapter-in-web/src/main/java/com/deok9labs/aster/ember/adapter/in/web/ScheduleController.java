@@ -1,18 +1,19 @@
 package com.deok9labs.aster.ember.adapter.in.web;
 
-import com.deok9labs.aster.ember.domain.AvailabilityRange;
+import com.deok9labs.aster.ember.domain.ScheduleSlot;
 import com.deok9labs.aster.ember.domain.ScheduleTime;
 import com.deok9labs.aster.ember.domain.ScheduleWeek;
-import com.deok9labs.aster.ember.application.port.in.GetCurrentScheduleUseCase;
+import com.deok9labs.aster.ember.application.port.in.GetScheduleUseCase;
 import com.deok9labs.aster.ember.application.port.in.ReplaceMemberScheduleUseCase;
 import com.deok9labs.aster.ember.application.port.in.command.ReplaceMemberScheduleCommand;
-import com.deok9labs.aster.ember.application.port.in.result.CurrentScheduleResult;
+import com.deok9labs.aster.ember.application.port.in.result.ScheduleResult;
 import com.deok9labs.aster.ember.application.port.in.result.ReplaceMemberScheduleResult;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.Parameter;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -31,25 +32,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class ScheduleController {
 
     private static final ZoneId SERVICE_ZONE = ZoneId.of("Asia/Seoul");
-    private final GetCurrentScheduleUseCase getCurrentScheduleUseCase;
+    private final GetScheduleUseCase getScheduleUseCase;
     private final ReplaceMemberScheduleUseCase replaceMemberScheduleUseCase;
 
     public ScheduleController(
-            GetCurrentScheduleUseCase getCurrentScheduleUseCase,
+            GetScheduleUseCase getScheduleUseCase,
             ReplaceMemberScheduleUseCase replaceMemberScheduleUseCase) {
-        this.getCurrentScheduleUseCase = getCurrentScheduleUseCase;
+        this.getScheduleUseCase = getScheduleUseCase;
         this.replaceMemberScheduleUseCase = replaceMemberScheduleUseCase;
     }
 
     @GetMapping("/{scheduleWeek}")
-    public CurrentScheduleResponse getSchedule(
+    public ScheduleResponse getSchedule(
             @Parameter(schema = @Schema(allowableValues = {"current", "next"}))
             @PathVariable("scheduleWeek") String scheduleWeek) {
-        CurrentScheduleResult result = getCurrentScheduleUseCase.getSchedule(
+        ScheduleResult result = getScheduleUseCase.getSchedule(
                 ScheduleWeek.fromPath(scheduleWeek));
 
         // Application 결과가 HTTP 표현 형식에 결합되지 않도록 Web response로 변환한다.
-        return new CurrentScheduleResponse(
+        return new ScheduleResponse(
                 result.weekStart(),
                 result.weekEnd(),
                 result.members().stream().map(member -> new MemberResponse(
@@ -58,9 +59,8 @@ public class ScheduleController {
                 result.availability().stream().map(availability -> new AvailabilityResponse(
                         availability.memberId(),
                         availability.date(),
-                        availability.ranges().stream().map(range -> new TimeRangeResponse(
-                                range.startTime().toString(),
-                                range.endTime().toString())).toList())).toList());
+                        availability.slots().stream().map(ScheduleTime::toString).toList()))
+                        .toList());
     }
 
     @PutMapping("/{scheduleWeek}/members/{memberId}")
@@ -75,11 +75,10 @@ public class ScheduleController {
                         memberId,
                         ScheduleWeek.fromPath(scheduleWeek),
                         request.expectedWeekStart(),
-                        request.ranges().stream()
-                                .map(range -> new AvailabilityRange(
-                                        range.date(),
-                                        ScheduleTime.parse(range.startTime()),
-                                        ScheduleTime.parse(range.endTime())))
+                        request.slots().stream()
+                                .map(slot -> new ScheduleSlot(
+                                        slot.date(),
+                                        ScheduleTime.parse(slot.slotTime())))
                                 .toList()));
         return new ReplaceScheduleResponse(
                 result.memberId(),
@@ -95,20 +94,20 @@ public class ScheduleController {
 
     public record ReplaceScheduleRequest(
             @NotNull LocalDate expectedWeekStart,
-            @NotNull List<@Valid TimeRangeRequest> ranges) {
+            @NotNull List<@Valid SlotRequest> slots) {
     }
 
-    public record TimeRangeRequest(
+    public record SlotRequest(
             @NotNull LocalDate date,
             @NotBlank
-            @Schema(type = "string", pattern = "^(18|19|20|21|22|23):(?:00|30)$", example = "18:00")
-            String startTime,
-            @NotBlank
-            @Schema(type = "string", pattern = "^(?:18|19|20|21|22|23):(?:00|30)$|^24:00$", example = "24:00")
-            String endTime) {
+            @Schema(
+                    type = "string",
+                    pattern = "^(?:18|19|20|21|22|23):(?:00|30)$|^24:00$",
+                    example = "24:00")
+            String slotTime) {
     }
 
-    public record CurrentScheduleResponse(
+    public record ScheduleResponse(
             LocalDate weekStart,
             LocalDate weekEnd,
             List<MemberResponse> members,
@@ -124,12 +123,14 @@ public class ScheduleController {
             OffsetDateTime updatedAt) {
     }
 
-    public record AvailabilityResponse(int memberId, LocalDate date, List<TimeRangeResponse> ranges) {
-    }
-
-    public record TimeRangeResponse(
-            @Schema(type = "string", example = "18:00") String startTime,
-            @Schema(type = "string", example = "24:00") String endTime) {
+    public record AvailabilityResponse(
+            int memberId,
+            LocalDate date,
+            @ArraySchema(schema = @Schema(
+                    type = "string",
+                    pattern = "^(?:18|19|20|21|22|23):(?:00|30)$|^24:00$",
+                    example = "24:00"))
+            List<String> slots) {
     }
 
     public record ReplaceScheduleResponse(
