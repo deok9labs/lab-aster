@@ -7,7 +7,7 @@ services:
     container_name: lab-aster-api
     env_file:
       # 기존 PostgreSQL과 동일한 자격 증명을 process 환경으로만 전달한다.
-      - /opt/lab-ember/postgres/.env
+      - /opt/postgres/.env
     environment:
       ASTER_OPENAPI_ENABLED: "false"
       DB_HOST: db
